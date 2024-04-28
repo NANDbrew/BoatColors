@@ -11,16 +11,15 @@ namespace BoatColors
 {
     internal class ShipColors
     {
-        private static char keyValSep = '=';
-        private static char[] entrySep = { ',' };
+        private static readonly char keyValSep = '=';
+        private static readonly char entrySep = ',';
 
-        public static readonly string trimName = "Trim";
-        public static readonly string hullName = "Hull";
-        public static readonly string cabinName = "Cabin";
-
+        public static readonly string trimName = " trim";
+        public static readonly string hullName = " hull";
+        public static readonly string cabinName = " cabin";
 
         public static Dictionary<string, Material> boatMats = new Dictionary<string, Material>();
-        public static Dictionary<string, Color> defaultColors = new Dictionary<string, Color>();
+        //public static Dictionary<string, Color> defaultColors = new Dictionary<string, Color>();
 
         // stupid copypasta is required to reference materials
         private static void AddMaterialEntry(string key, Transform transform, int index)
@@ -29,7 +28,7 @@ namespace BoatColors
             if (!boatMats.ContainsKey(key)) { boatMats.Add(key, transform.GetComponent<Renderer>().materials[index]); }
             transform.GetComponent<Renderer>().materials[index] = boatMats[key];
 
-            if (!defaultColors.ContainsKey(key)) { defaultColors.Add(key, transform.GetComponent<Renderer>().materials[index].color); }
+            //if (!defaultColors.ContainsKey(key)) { defaultColors.Add(key, transform.GetComponent<Renderer>().materials[index].color); }
             //Debug.Log("boatcolors method 0: added " + transform.name + " " + key + hullName);
 
         }
@@ -37,14 +36,14 @@ namespace BoatColors
         {
             if (!boatMats.ContainsKey(key)) { boatMats.Add(key, transform.GetComponent<Renderer>().material); }
             transform.GetComponent<Renderer>().material = boatMats[key];
-            if (!defaultColors.ContainsKey(key)) { defaultColors.Add(key, transform.GetComponent<Renderer>().material.color); }
+            //if (!defaultColors.ContainsKey(key)) { defaultColors.Add(key, transform.GetComponent<Renderer>().material.color); }
             //Debug.Log("boatcolors method 1: added " + transform.name + " " + key + hullName);
 
         }
 
         public static void Cache3(Transform ship)
         {
-            string boatName = Plugin.GetBoatName(ship.name);
+            string boatName = ship.name;
             // ----- kakam -----
             if (ship.name.Contains("junk small"))
             {
@@ -312,7 +311,6 @@ namespace BoatColors
                     }
                 }
             }
-
             // ----- sanbuq -----
             if (ship.name.Contains("dhow medium"))
             {
@@ -352,12 +350,13 @@ namespace BoatColors
             for (int i = 0; i < boatMats.Count; i++)
             {
                 KeyValuePair<string, Material> mat = boatMats.ElementAt(i);
+                string key = Plugin.GetBoatName(mat.Key);
                 //Debug.Log("boatColors: " + mat.Key.Split('H')[0]);
-                if (GameState.modData.TryGetValue(mat.Key.Split('H')[0], out var hexColor))
+                if (GameState.modData.TryGetValue(key, out var hexColor))
                 {
                     ColorUtility.TryParseHtmlString(hexColor, out Color color);
                     mat.Value.color = color;
-                    GameState.modData.Remove(mat.Key);
+                    GameState.modData.Remove(key);
                     success = true;
                 }
             }
@@ -379,10 +378,11 @@ namespace BoatColors
             if (GameState.modData.TryGetValue(Plugin.PLUGIN_ID, out string data))
             {
                 //Debug.Log("string=" + colorStrings);
-                var entries = data.Split(entrySep, StringSplitOptions.RemoveEmptyEntries);
+                var entries = data.Split(entrySep);
                 //Debug.Log("strings1= " + strings1);
                 foreach (string entry in entries)
                 {
+                    if (entry.Length < 6) continue;
                     string[] keyValue = entry.Split(keyValSep);
                     ColorUtility.TryParseHtmlString(keyValue[1], out Color color);
                     if (color != null && boatMats.ContainsKey(keyValue[0])) boatMats[keyValue[0]].color = color;

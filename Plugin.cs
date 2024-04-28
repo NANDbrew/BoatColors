@@ -50,9 +50,9 @@ namespace BoatColors
         internal static ConfigEntry<Color> paintCurrentCabin;
         internal static ConfigEntry<Color> paintCurrentTrim;
 
-        internal static Color hullDefault = new Color();
-        internal static Color trimDefault = new Color();
-        internal static Color cabinDefault = new Color();
+        internal static Color hullDefault = new Color(0.5f, 0.5f, 0.5f, 1f);
+        internal static Color trimDefault = new Color(0.5f, 0.5f, 0.5f, 1f);
+        internal static Color cabinDefault = new Color(0.5f, 0.5f, 0.5f, 1f);
 
         private void Awake()
         {
@@ -131,13 +131,13 @@ namespace BoatColors
             paintBrigTrim = instance.Config.Bind("Brig Colors", "Brig trim", ShipColors.defaultColors["brigTrim"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             paintbrigCabin = instance.Config.Bind("Brig Colors", "Brig Railings", ShipColors.defaultColors["brigCabin"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
 */
-            paintCurrentHull = instance.Config.Bind("Current Boat Colors", "Hull", hullDefault);
-            paintCurrentCabin = instance.Config.Bind("Current Boat Colors", "Roof", cabinDefault);
-            paintCurrentTrim = instance.Config.Bind("Current Boat Colors", "Trim", trimDefault);
+            paintCurrentHull = instance.Config.Bind("Current Boat Colors", "Hull", hullDefault, new ConfigDescription("", null, new ConfigurationManagerAttributes { HideDefaultButton = true }));
+            paintCurrentCabin = instance.Config.Bind("Current Boat Colors", "Roof", cabinDefault, new ConfigDescription("", null, new ConfigurationManagerAttributes { HideDefaultButton = true }));
+            paintCurrentTrim = instance.Config.Bind("Current Boat Colors", "Trim", trimDefault, new ConfigDescription("", null, new ConfigurationManagerAttributes { HideDefaultButton = true }));
 
 
             SetConfigDelegates();
-            UpdateConfigsFromSave();
+            UpdateConfigsFromBoat();
 
         }
         public static void OnSettingsChanged(string name, Color color)
@@ -148,7 +148,7 @@ namespace BoatColors
                 return;
             }
 
-            ShipColors.UpdateColor(GetBoatName(GameState.lastBoat.name) + name, color);
+            ShipColors.UpdateColor(GameState.lastBoat.name + name, color);
         }
         public static string GetBoatName(string currentBoat)
         {
@@ -179,7 +179,7 @@ namespace BoatColors
             return currentBoat;
         }
 
-        public static void UpdateConfigsFromSave()
+        public static void UpdateConfigsFromBoat()
         {
             /*paintSanbuqHull.Value = ShipColors.boatMats["sanbuqHull"].color;
             paintSanbuqCabin.Value = ShipColors.boatMats["sanbuqCabin"].color;
@@ -207,9 +207,9 @@ namespace BoatColors
 
 
             if (!GameState.lastBoat || ShipColors.boatMats == null) return;
-            paintCurrentHull.Value = ShipColors.boatMats[GetBoatName(GameState.lastBoat.name) + ShipColors.hullName].color;
-            paintCurrentCabin.Value = ShipColors.boatMats[GetBoatName(GameState.lastBoat.name) + ShipColors.cabinName].color;
-            paintCurrentTrim.Value = ShipColors.boatMats[GetBoatName(GameState.lastBoat.name) + ShipColors.trimName].color;
+            paintCurrentHull.Value = ShipColors.boatMats[GameState.lastBoat.name + ShipColors.hullName].color;
+            paintCurrentCabin.Value = ShipColors.boatMats[GameState.lastBoat.name + ShipColors.cabinName].color;
+            paintCurrentTrim.Value = ShipColors.boatMats[GameState.lastBoat.name + ShipColors.trimName].color;
 
         }
 

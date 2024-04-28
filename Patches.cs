@@ -27,6 +27,7 @@ namespace BoatColors
             {
                 ShipColors.LoadColors();
                 Plugin.AddConfigEntries();
+                Plugin.UpdateConfigsFromBoat();
                 //ShipColors.UpdateColorsFromConfig();
             }
             [HarmonyPatch("SaveModData")]
@@ -39,15 +40,15 @@ namespace BoatColors
             }
         }
 
- /*       [HarmonyPatch(typeof(PlayerEmbarkDisembarkTrigger), "EnterBoat")]
+        [HarmonyPatch(typeof(PlayerEmbarkDisembarkTrigger), "EnterBoat")]
         public static class Patch1
         {
             [HarmonyPostfix]
             public static void PostFix()
             {
-                Plugin.UpdateConfigsFromSave();
+                Plugin.UpdateConfigsFromBoat();
             }
-        }*/
+        }
         /*        [HarmonyPatch(typeof(PurchasableBoat), "LoadAsPurchased")]
                 public static class LoadPatch
                 {
