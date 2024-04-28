@@ -18,25 +18,45 @@ namespace BoatColors
             }
         }
 
-        [HarmonyPatch(typeof(SaveLoadManager), "LoadModData")]
+        [HarmonyPatch(typeof(SaveLoadManager))]
         public static class SaveLoadPatch
         {
+            [HarmonyPatch("LoadModData")]
             [HarmonyPostfix]
             public static void LoadModData()
             {
                 ShipColors.LoadColors();
+                Plugin.AddConfigEntries();
+                //ShipColors.UpdateColorsFromConfig();
+            }
+            [HarmonyPatch("SaveModData")]
+            [HarmonyPrefix]
+            public static void SaveModData()
+            {
+                ShipColors.SaveColors();
+                //Plugin.AddConfigEntries();
+                //ShipColors.UpdateColorsFromConfig();
             }
         }
 
-/*        [HarmonyPatch(typeof(PurchasableBoat), "LoadAsPurchased")]
-        public static class LoadPatch
+ /*       [HarmonyPatch(typeof(PlayerEmbarkDisembarkTrigger), "EnterBoat")]
+        public static class Patch1
         {
             [HarmonyPostfix]
-            public static void Postfix()
+            public static void PostFix()
             {
-                ShipColors.LoadColors();
+                Plugin.UpdateConfigsFromSave();
             }
         }*/
+        /*        [HarmonyPatch(typeof(PurchasableBoat), "LoadAsPurchased")]
+                public static class LoadPatch
+                {
+                    [HarmonyPostfix]
+                    public static void Postfix()
+                    {
+                        ShipColors.LoadColors();
+                    }
+                }*/
 
         /*        [HarmonyPatch(typeof(StartMenu), "Start")]
                 public static class StartMenuPatch

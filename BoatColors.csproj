@@ -78,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationManagerAttributes.cs" />
     <Compile Include="ModRefs.cs" />
     <Compile Include="Patches.cs" />
     <Compile Include="Plugin.cs" />

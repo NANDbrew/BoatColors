@@ -16,10 +16,7 @@ namespace BoatColors
         private void Start()
         {
             modData = GameState.modData;
-            meshRenderers = ShipColors.meshRenderers;
             boatMats = ShipColors.boatMats;
-            //var key = modData.First().Key;
-            //modData.Remove(key);
         }
 
         public void SaveColors()
