@@ -82,7 +82,7 @@
     <Compile Include="ModRefs.cs" />
     <Compile Include="Patches.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="SaveLoadPatches.cs" />
+    <Compile Include="SailPatches.cs" />
     <Compile Include="ShipColors.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -19,7 +19,7 @@ namespace BoatColors
     }
 
     [HarmonyPatch(typeof(SaveLoadManager))]
-    internal class SaveLoadPatches
+    internal class SailPatches
     {
         /*[HarmonyPatch("LoadModData")]
         [HarmonyPostfix]
@@ -33,6 +33,7 @@ namespace BoatColors
         [HarmonyPostfix]
         public static void AddColors(SaveLoadManager __instance, ref PrefabsDirectory ___prefabsDirectory)
         {
+            if (!Plugin.useCustomSailColors.Value) { return; }
             ___prefabsDirectory.sailColors = ___prefabsDirectory.sailColors.AddRangeToArray(new Color[]{ Color.white, Color.black });
             SailColorPatcher.prefabsDirectory = ___prefabsDirectory;
             //___prefabsDirectory.sailColors.Append(new Color(0, 0, 0));
@@ -49,6 +50,8 @@ namespace BoatColors
         [HarmonyPostfix]
         public static void AddColors(Shipyard __instance, ref int[] ___availableSailColors)
         {
+            if (!Plugin.useCustomSailColors.Value) { return; }
+
             ___availableSailColors = ___availableSailColors.AddRangeToArray(new int[] { 24, 25 });
         }
     }
