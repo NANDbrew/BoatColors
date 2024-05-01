@@ -54,92 +54,47 @@ namespace BoatColors
         internal static Color trimDefault = new Color(0.5f, 0.5f, 0.5f, 1f);
         internal static Color cabinDefault = new Color(0.5f, 0.5f, 0.5f, 1f);
 
+        internal static ConfigEntry<Color> customSailColor;
+        internal static ConfigEntry<Color> customSailColor1;
+
+
         private void Awake()
         {
             instance = this;
 
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PLUGIN_ID);
-            //AddConfigEntries();
-
-     /*       globalColors = Config.Bind("Options", "Global colors", false, new ConfigDescription(""));
-            globalColors.SettingChanged += (sender, args) => ShipColors.LoadColors();*/
-
-            //loadColors = Config.Bind("Options", "load colors", false, new ConfigDescription("Write paint colors to save. (otherwise they're game-wide)"));
             //SetConfigDelegates();
             //OnSettingsChanged();
-            //AddConfigEntries();
-        }
-
-
-
-        public static void SetConfigDelegates()
-        {
-           /* paintKakamHull.SettingChanged += (sender, args) => ShipColors.UpdateColor("kakamHull", paintKakamHull.Value);
-            paintKakamCabin.SettingChanged += (sender, args) => ShipColors.UpdateColor("kakamCabin", paintKakamCabin.Value);
-            paintKakamTrim.SettingChanged += (sender, args) => ShipColors.UpdateColor("kakamTrim", paintKakamTrim.Value);
-
-            paintCogHull.SettingChanged += (sender, args) => ShipColors.UpdateColor("cogHull", paintCogHull.Value);
-            paintCogCabin.SettingChanged += (sender, args) => ShipColors.UpdateColor("cogCabin", paintCogCabin.Value);
-            paintCogTrim.SettingChanged += (sender, args) => ShipColors.UpdateColor("cogTrim", paintCogTrim.Value);
-
-            paintDhowHull.SettingChanged += (sender, args) => ShipColors.UpdateColor("dhowHull", paintDhowHull.Value);
-            paintDhowCabin.SettingChanged += (sender, args) => ShipColors.UpdateColor("dhowCabin", paintDhowCabin.Value);
-            paintDhowTrim.SettingChanged += (sender, args) => ShipColors.UpdateColor("dhowTrim", paintDhowTrim.Value);
-
-            paintBrigHull.SettingChanged += (sender, args) => ShipColors.UpdateColor("brigHull", paintBrigHull.Value);
-            paintBrigTrim.SettingChanged += (sender, args) => ShipColors.UpdateColor("brigTrim", paintBrigTrim.Value);
-            paintbrigCabin.SettingChanged += (sender, args) => ShipColors.UpdateColor("brigCabin", paintbrigCabin.Value);
-
-            paintSanbuqHull.SettingChanged += (sender, args) => ShipColors.UpdateColor("sanbuqHull", paintSanbuqHull.Value);
-            paintSanbuqCabin.SettingChanged += (sender, args) => ShipColors.UpdateColor("sanbuqCabin", paintSanbuqCabin.Value);
-            paintSanbuqTrim.SettingChanged += (sender, args) => ShipColors.UpdateColor("sanbuqTrim", paintSanbuqTrim.Value);
-
-            paintJunkHull.SettingChanged += (sender, args) => ShipColors.UpdateColor("junkHull", paintJunkHull.Value);
-            paintJunkCabin.SettingChanged += (sender, args) => ShipColors.UpdateColor("junkCabin", paintJunkCabin.Value);
-            paintJunkTrim.SettingChanged += (sender, args) => ShipColors.UpdateColor("junkTrim", paintJunkTrim.Value);
-*/
-            paintCurrentHull.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.hullName, paintCurrentHull.Value);
-            paintCurrentCabin.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.cabinName, paintCurrentCabin.Value);
-            paintCurrentTrim.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.trimName, paintCurrentTrim.Value);
-
+            AddConfigEntries();
 
         }
+
         public static void AddConfigEntries()
         {
-/*
-            paintSanbuqHull = instance.Config.Bind("Sanbuq Colors", "Sanbuq hull", ShipColors.defaultColors["sanbuqHull"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true}));
-            paintSanbuqCabin = instance.Config.Bind("Sanbuq Colors", "Sanbuq roof", ShipColors.defaultColors["sanbuqCabin"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintSanbuqTrim = instance.Config.Bind("Sanbuq Colors", "Sanbuq trim", ShipColors.defaultColors["sanbuqTrim"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
 
-            paintJunkHull = instance.Config.Bind("Junk Colors", "Junk hull", ShipColors.defaultColors["junkHull"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintJunkCabin = instance.Config.Bind("Junk Colors", "Junk cabin", ShipColors.defaultColors["junkCabin"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintJunkTrim = instance.Config.Bind("Junk Colors", "Junk trim", ShipColors.defaultColors["junkTrim"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-
-            paintKakamHull = instance.Config.Bind("Kakam Colors", "Kakam hull", ShipColors.defaultColors["kakamHull"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintKakamCabin = instance.Config.Bind("Kakam Colors", "Kakam cabin", ShipColors.defaultColors["kakamCabin"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintKakamTrim = instance.Config.Bind("Kakam Colors", "Kakam trim", ShipColors.defaultColors["kakamTrim"]  , new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-
-            paintDhowHull = instance.Config.Bind("Dhow Colors", "Dhow hull", ShipColors.defaultColors["dhowHull"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintDhowCabin = instance.Config.Bind("Dhow Colors", "Dhow roof color", ShipColors.defaultColors["dhowCabin"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintDhowTrim = instance.Config.Bind("Dhow Colors", "Dhow trim", ShipColors.defaultColors["dhowTrim"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-
-            paintCogHull = instance.Config.Bind("Cog Colors", "Cog hull",  ShipColors.defaultColors["cogHull"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintCogCabin = instance.Config.Bind("Cog Colors", "Cog cabin", ShipColors.defaultColors["cogCabin"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintCogTrim = instance.Config.Bind("Cog Colors", "Cog trim", ShipColors.defaultColors["cogTrim"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-
-            paintBrigHull = instance.Config.Bind("Brig Colors", "Brig hull", ShipColors.defaultColors["brigHull"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintBrigTrim = instance.Config.Bind("Brig Colors", "Brig trim", ShipColors.defaultColors["brigTrim"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            paintbrigCabin = instance.Config.Bind("Brig Colors", "Brig Railings", ShipColors.defaultColors["brigCabin"], new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-*/
             paintCurrentHull = instance.Config.Bind("Current Boat Colors", "Hull", hullDefault, new ConfigDescription("", null, new ConfigurationManagerAttributes { HideDefaultButton = true }));
             paintCurrentCabin = instance.Config.Bind("Current Boat Colors", "Roof", cabinDefault, new ConfigDescription("", null, new ConfigurationManagerAttributes { HideDefaultButton = true }));
             paintCurrentTrim = instance.Config.Bind("Current Boat Colors", "Trim", trimDefault, new ConfigDescription("", null, new ConfigurationManagerAttributes { HideDefaultButton = true }));
 
+            //customSailColor = instance.Config.Bind("Sails", "Custom Sail Color", new Color(1, 1, 1), new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = false }));
+            //customSailColor1 = instance.Config.Bind("Sails", "Custom Sail Color 1", new Color(0, 0, 0), new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = false }));
+
 
             SetConfigDelegates();
-            UpdateConfigsFromBoat();
 
         }
+        public static void SetConfigDelegates()
+        {
+
+            paintCurrentHull.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.hullName, paintCurrentHull.Value);
+            paintCurrentCabin.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.cabinName, paintCurrentCabin.Value);
+            paintCurrentTrim.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.trimName, paintCurrentTrim.Value);
+
+            //customSailColor.SettingChanged += (sender, args) => SailColorPatcher.UpdateCustomSailColor(24, customSailColor.Value);
+            //customSailColor1.SettingChanged += (sender, args) => SailColorPatcher.UpdateCustomSailColor(25, customSailColor1.Value);
+
+        }
+
         public static void OnSettingsChanged(string name, Color color)
         {
             if (!GameState.lastBoat)
@@ -181,29 +136,6 @@ namespace BoatColors
 
         public static void UpdateConfigsFromBoat()
         {
-            /*paintSanbuqHull.Value = ShipColors.boatMats["sanbuqHull"].color;
-            paintSanbuqCabin.Value = ShipColors.boatMats["sanbuqCabin"].color;
-            paintSanbuqTrim.Value = ShipColors.boatMats["sanbuqTrim"].color;
-
-            paintJunkHull.Value = ShipColors.boatMats["junkHull"].color;
-            paintJunkCabin.Value = ShipColors.boatMats["junkCabin"].color;
-            paintJunkTrim.Value = ShipColors.boatMats["junkTrim"].color;
-
-            paintKakamHull.Value = ShipColors.boatMats["kakamHull"].color;
-            paintKakamCabin.Value = ShipColors.boatMats["kakamCabin"].color;
-            paintKakamTrim.Value = ShipColors.boatMats["kakamTrim"].color;
-
-            paintDhowHull.Value = ShipColors.boatMats["dhowHull"].color;
-            paintDhowCabin.Value = ShipColors.boatMats["dhowCabin"].color;
-            paintDhowTrim.Value = ShipColors.boatMats["dhowTrim"].color;
-
-            paintCogHull.Value = ShipColors.boatMats["cogHull"].color;
-            paintCogCabin.Value = ShipColors.boatMats["cogCabin"].color;
-            paintCogTrim.Value = ShipColors.boatMats["cogTrim"].color;
-
-            paintBrigHull.Value = ShipColors.boatMats["brigHull"].color;
-            paintBrigTrim.Value = ShipColors.boatMats["brigTrim"].color;
-            paintbrigCabin.Value = ShipColors.boatMats["brigCabin"].color;*/
 
 
             if (!GameState.lastBoat || ShipColors.boatMats == null) return;

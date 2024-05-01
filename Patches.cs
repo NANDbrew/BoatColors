@@ -26,17 +26,12 @@ namespace BoatColors
             public static void LoadModData()
             {
                 ShipColors.LoadColors();
-                Plugin.AddConfigEntries();
-                Plugin.UpdateConfigsFromBoat();
-                //ShipColors.UpdateColorsFromConfig();
             }
             [HarmonyPatch("SaveModData")]
             [HarmonyPrefix]
             public static void SaveModData()
             {
                 ShipColors.SaveColors();
-                //Plugin.AddConfigEntries();
-                //ShipColors.UpdateColorsFromConfig();
             }
         }
 
@@ -49,36 +44,6 @@ namespace BoatColors
                 Plugin.UpdateConfigsFromBoat();
             }
         }
-        /*        [HarmonyPatch(typeof(PurchasableBoat), "LoadAsPurchased")]
-                public static class LoadPatch
-                {
-                    [HarmonyPostfix]
-                    public static void Postfix()
-                    {
-                        ShipColors.LoadColors();
-                    }
-                }*/
 
-        /*        [HarmonyPatch(typeof(StartMenu), "Start")]
-                public static class StartMenuPatch
-                {
-                    [HarmonyPostfix]
-                    public static void StartPatch()
-                    {
-                        ShipColors.UpdateColors();
-                    }
-                }*/
-        /*
-                [HarmonyPatch(typeof(BoatPerformanceSwitcher), "Update")]
-                public static class BoatPerformanceSwitcherPatch
-                {
-                    [HarmonyPostfix]
-                    public static void Postfix(BoatPerformanceSwitcher __instance)
-                    {
-                        ShipColors.UpdateShipColors(__instance.transform);
-                        //Debug.Log("BPS update");
-                    }
-
-                }*/
     }
 }
