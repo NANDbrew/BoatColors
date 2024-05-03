@@ -20,6 +20,12 @@ namespace BoatColors
 
         public static Dictionary<string, Material> boatMats = new Dictionary<string, Material>();
         //public static Dictionary<string, Color> defaultColors = new Dictionary<string, Color>();
+/*        public static Dictionary<string, Renderer> renderers = new Dictionary<string, Renderer>();
+
+        private static void AddHullEntry(string key, Transform transform)
+        {
+            if (!renderers.ContainsKey(key)) { renderers.Add(key, transform.GetComponent<Renderer>()); }
+        }*/
 
         // stupid copypasta is required to reference materials
         private static void AddMaterialEntry(string key, Transform transform, int index)
@@ -155,6 +161,14 @@ namespace BoatColors
                             }
                         }
                     }
+                    if (child.name == "struct_var_3__no_cabin_")
+                    {
+                        //if (!boatMats.ContainsKey(boatName + trimName)) boatMats.Add(boatName + trimName, subChild.GetComponent<MeshRenderer>().material);
+                        //subChild.GetComponent<MeshRenderer>().material = boatMats[boatName + trimName];
+                        AddMaterialEntry(boatName + trimName, child);
+
+                    }
+
                 }
             }
 
