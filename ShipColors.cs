@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
@@ -19,65 +20,48 @@ namespace BoatColors
         public static readonly string cabinName = " cabin";
 
         public static Dictionary<string, Material> boatMats = new Dictionary<string, Material>();
-        //public static Dictionary<string, Color> defaultColors = new Dictionary<string, Color>();
-/*        public static Dictionary<string, Renderer> renderers = new Dictionary<string, Renderer>();
 
-        private static void AddHullEntry(string key, Transform transform)
+        public static Dictionary<string, Color> defaultColors = new Dictionary<string, Color>();
+
+        private static void AddMaterialEntry(string key, Renderer target, int index)
         {
-            if (!renderers.ContainsKey(key)) { renderers.Add(key, transform.GetComponent<Renderer>()); }
-        }*/
+            if (!defaultColors.ContainsKey(key)) { defaultColors.Add(key, target.materials.Last().color); }
+
+            if (!boatMats.ContainsKey(key)) { boatMats.Add(key, target.materials.Last()); }
+            target.materials[target.materials.Count() - 1] = boatMats[key];
+        }
+        private static void AddMaterialEntry(string key, Renderer target)
+        {
+            if (!defaultColors.ContainsKey(key)) { defaultColors.Add(key, target.material.color); }
+
+            if (!boatMats.ContainsKey(key)) { boatMats.Add(key, target.material); }
+            target.material = boatMats[key];
+        }
 
         // stupid copypasta is required to reference materials
-        private static void AddMaterialEntry(string key, Transform transform, int index)
-        {
-
-            if (!boatMats.ContainsKey(key)) { boatMats.Add(key, transform.GetComponent<Renderer>().materials[index]); }
-            transform.GetComponent<Renderer>().materials[index] = boatMats[key];
-
-            //if (!defaultColors.ContainsKey(key)) { defaultColors.Add(key, transform.GetComponent<Renderer>().materials[index].color); }
-            //Debug.Log("boatcolors method 0: added " + transform.name + " " + key + hullName);
-
-        }
-        private static void AddMaterialEntry(string key, Transform transform)
-        {
-            if (!boatMats.ContainsKey(key)) { boatMats.Add(key, transform.GetComponent<Renderer>().material); }
-            transform.GetComponent<Renderer>().material = boatMats[key];
-            //if (!defaultColors.ContainsKey(key)) { defaultColors.Add(key, transform.GetComponent<Renderer>().material.color); }
-            //Debug.Log("boatcolors method 1: added " + transform.name + " " + key + hullName);
-
-        }
-
         public static void Cache3(Transform ship)
         {
             string boatName = ship.name;
             // ----- kakam -----
-            if (ship.name.Contains("junk small"))
+            if (ship.GetComponent<SaveableObject>().sceneIndex == 90)
             {
                 
                 var structure = ship.Find("junk small").Find("structure");
-                for (int i = 0; i < structure.childCount; i++)
+                foreach (Renderer child in structure.GetComponentsInChildren<Renderer>(true))
                 {
-                    var child = structure.GetChild(i);
                     if (child.name.Contains("trim"))
                     {
-                        //if (!boatMats.ContainsKey(boatName + trimName)) boatMats.Add(boatName + trimName, child.GetComponent<MeshRenderer>().material);
-                        //child.GetComponent<MeshRenderer>().material = boatMats[boatName + trimName];
                         AddMaterialEntry(boatName + trimName, child);
 
                     }
                     if (child.name == "hull")
                     {
-                        //if (!boatMats.ContainsKey(boatName + hullName)) boatMats.Add(boatName + hullName, child.GetComponent<MeshRenderer>().materials[1]);
-                        //child.GetComponent<MeshRenderer>().materials[1] = boatMats[boatName + hullName];
                         AddMaterialEntry(boatName + hullName, child, 1);
 
                     }
-                    if (child.name.Contains("_roof_"))
+                    if (child.transform.parent != structure && child.transform.parent.name.Contains("_roof_") && child.transform.GetSiblingIndex() == 0)
                     {
-                        //var subChild = child.GetChild(0).GetComponent<MeshRenderer>();
-                        //if (!boatMats.ContainsKey(boatName + cabinName)) boatMats.Add(boatName + cabinName, subChild.material);
-                        //subChild.material = boatMats[boatName + cabinName];
-                        AddMaterialEntry(boatName + cabinName, child.GetChild(0));
+                        AddMaterialEntry(boatName + cabinName, child);
 
                     }
                 }
@@ -85,155 +69,109 @@ namespace BoatColors
             }
 
             // ----- cog -----
-            if (ship.name.Contains("medi small"))
+            if (ship.GetComponent<SaveableObject>().sceneIndex == 40)
             {
                 var container = ship.Find("medi small");
 
-                for (int i = 0; i < container.childCount; i++)
+                foreach (Renderer child in container.GetComponentsInChildren<Renderer>(true))
                 {
-                    var child = container.GetChild(i);
-                    if (child.name == ("hull"))
+                    if (child.transform.parent.name == "struct_var_1__low_roof_" && child.name == "trim_000")
                     {
-
-                        //if (!boatMats.ContainsKey(boatName + hullName)) 
-                            //boatMats.Add(boatName + hullName, child.GetComponent<MeshRenderer>().materials[1]);
-                        //child.GetComponent<MeshRenderer>().materials[1] = boatMats[boatName + hullName];
+                        AddMaterialEntry(boatName + cabinName, child);
+                        continue;
+                    }
+                    if (child.name.Contains("trim") || child.name.Contains("Cube") || child.name == "struct_var_3__no_cabin_")
+                    {
+                        AddMaterialEntry(boatName + trimName, child);
+                        continue;
+                    }
+                    if (child.name.Contains("hull"))
+                    {
+                        if (child.transform.parent.name == "struct_var_2__balcony_")
+                        {
+                            AddMaterialEntry(boatName + cabinName, child);
+                            continue;
+                        }
                         AddMaterialEntry(boatName + hullName, child, 1);
 
                     }
-                    if (child.name == "structure")
-                    {
-                        for (int j = 0; j < child.childCount; j++)
-                        {
-                            var subChild = child.GetChild(j);
-                            if (subChild.name.Contains("trim"))
-                            {
-                                //if (!boatMats.ContainsKey(boatName + trimName)) 
-                                    //boatMats.Add(boatName + trimName, subChild.GetComponent<MeshRenderer>().material);
-                                //subChild.GetComponent<MeshRenderer>().material = boatMats[boatName + trimName];
-                                AddMaterialEntry(boatName + trimName, subChild);
-
-                            }
-
-                        }
-
-                    }
-                    if (child.name.Contains("struct_var_2__balcony_"))
-                    {
-                        for (int k = 0;k < child.childCount;k++)
-                        {
-                            var subChild = child.GetChild(k);
-                            if (subChild.name.Contains("trim") || subChild.name.Contains("Cube"))
-                            {
-                                //if (!boatMats.ContainsKey(boatName + trimName)) boatMats.Add(boatName + trimName, subChild.GetComponent<MeshRenderer>().material);
-                                //subChild.GetComponent<MeshRenderer>().material = boatMats[boatName + trimName];
-                                AddMaterialEntry(boatName + trimName, subChild);
-
-                            }
-                            if (subChild.name.Contains("hull"))
-                            {
-                                //if (!boatMats.ContainsKey(boatName + cabinName)) boatMats.Add(boatName + cabinName, subChild.GetComponent<MeshRenderer>().material);
-                                //subChild.GetComponent<MeshRenderer>().material = boatMats[boatName + cabinName];
-                                AddMaterialEntry(boatName + cabinName, subChild);
-
-                            }
-                        }
-
-                    }
-                    if (child.name == "struct_var_1__low_roof_")
-                    {
-                        for (int l = 0; l < child.childCount; l++)
-                        {
-                            var subChild = child.GetChild(l);
-                            if (subChild.name == "trim_000")
-                            {
-                                //if (!boatMats.ContainsKey(boatName + cabinName)) boatMats.Add(boatName + cabinName, subChild.GetComponent<MeshRenderer>().material);
-                                //subChild.GetComponent<MeshRenderer>().material = boatMats[boatName + cabinName];
-                                AddMaterialEntry(boatName + cabinName, subChild);
-
-                            }
-                            else if (subChild.name.Contains("trim"))
-                            {
-                                //if (!boatMats.ContainsKey(boatName + trimName)) boatMats.Add(boatName + trimName, subChild.GetComponent<MeshRenderer>().material);
-                                //subChild.GetComponent<MeshRenderer>().material = boatMats[boatName + trimName];
-                                AddMaterialEntry(boatName + trimName, subChild);
-
-                            }
-                        }
-                    }
-                    if (child.name == "struct_var_3__no_cabin_")
-                    {
-                        //if (!boatMats.ContainsKey(boatName + trimName)) boatMats.Add(boatName + trimName, subChild.GetComponent<MeshRenderer>().material);
-                        //subChild.GetComponent<MeshRenderer>().material = boatMats[boatName + trimName];
-                        AddMaterialEntry(boatName + trimName, child);
-
-                    }
-
                 }
+/*                foreach (Renderer child in container.Find("structure").GetComponentsInChildren<Renderer>(true))
+                {
+                    if (child.transform.parent.name == "struct_var_1__low_roof_" && child.name == "trim_000")
+                    {
+                        AddMaterialEntry(boatName + cabinName, child);
+                        continue;
+                    }
+                    if (child.name.Contains("trim") || child.name.Contains("Cube") || child.name == "struct_var_3__no_cabin_")
+                    {
+                        AddMaterialEntry(boatName + trimName, child);
+                        continue;
+                    }
+                    if (child.name.Contains("hull"))
+                    {
+                        if (child.transform.parent.name == "struct_var_2_balcony_")
+                        {
+                            AddMaterialEntry(boatName + cabinName, child);
+                            continue;
+                        }
+                        AddMaterialEntry(boatName + hullName, child, 1);
+
+                    }
+                }*/
+
             }
 
             // ----- dhow -----
-            if (ship.name.Contains("dhow small"))
+            if (ship.GetComponent<SaveableObject>().sceneIndex == 10)
             {
 
                 var container = ship.Find("dhow");
-                for (int i = 0; i < container.childCount; i++)
+                foreach (Renderer child in container.GetComponentsInChildren<Renderer>(true))
                 {
-                    var child = container.GetChild(i);
-                    if (child.name == "hull")
+                    if (child.transform.parent != container && child.transform.parent.name == "roof_cloth_posts")
                     {
-                        //if (!boatMats.ContainsKey(boatName + hullName))
-                            //boatMats.Add(boatName + hullName, child.GetComponent<MeshRenderer>().materials[1]);
-                        //child.GetComponent<MeshRenderer>().materials[1] = boatMats[boatName + hullName];
+                        if (child.transform.GetSiblingIndex() == 0)
+                        {
+                            AddMaterialEntry(boatName + cabinName, child);
+                        }
+                        else if (child.transform.GetSiblingIndex() == 1)
+                        {
+                            AddMaterialEntry(boatName + trimName, child);
+                        }
+                    }
+                    else if (child.name == "hull")
+                    {
                         AddMaterialEntry(boatName + hullName, child, 1);
 
                     }
-                    if (child.name.Contains("trim"))
+                    else if (child.name.Contains("trim"))
                     {
-                        /*if (!boatMats.ContainsKey(boatName + trimName))
-                            boatMats.Add(boatName + trimName, child.GetComponent<MeshRenderer>().material);
-                        child.GetComponent<MeshRenderer>().material = boatMats[boatName + trimName];*/
                         AddMaterialEntry(boatName + trimName, child);
-
                     }
-                    if (child.name == "roof_hard")
+                    else if (child.name == "roof_hard")
                     {
-                        /*if (!boatMats.ContainsKey(boatName + cabinName))
-                            boatMats.Add(boatName + cabinName, child.GetComponent<MeshRenderer>().material);
-                        child.GetComponent<MeshRenderer>().material = boatMats[boatName + cabinName];*/
                         AddMaterialEntry(boatName + cabinName, child);
-
-                    }
-                    if (child.name == "roof_cloth_posts")
-                    {
-                        /*var subChild = child.GetChild(0);
-                        if (!boatMats.ContainsKey(boatName + cabinName))
-                            boatMats.Add(boatName + cabinName, subChild.GetComponent<SkinnedMeshRenderer>().material);
-                        subChild.GetComponent<SkinnedMeshRenderer>().material = boatMats[boatName + cabinName];*/
-                        AddMaterialEntry(boatName + cabinName, child.GetChild(0));
-                        AddMaterialEntry(boatName + trimName, child.GetChild(1));
-
                     }
                 }
 
             }
             // ----- junk -----
-            if (ship.name.Contains("junk medium"))
+            if (ship.GetComponent<SaveableObject>().sceneIndex == 80)
             {
                 var structure = ship.Find("junk medium (actual)").Find("structure");
-                for (int i = 0; i < structure.childCount; i++)
+                foreach (Renderer child in structure.GetComponentsInChildren<Renderer>(true))
                 {
-                    var child = structure.GetChild(i);
-                    //Debug.Log("junk child=" + child.name);
+                    if (child.transform.parent.name.StartsWith("mast"))
+                    {
+                        continue;
+                    }
                     if (child.name == "hull")
                     {
-                        /*if (!boatMats.ContainsKey(boatName + hullName))
-                            boatMats.Add(boatName + hullName, child.GetComponent<MeshRenderer>().materials[1]);
-                        child.GetComponent<MeshRenderer>().materials[1] = boatMats[boatName + hullName];*/
                         AddMaterialEntry(boatName + hullName, child, 1);
                         Debug.Log("boatcolors: adding " + child.name + " " + boatName + hullName);
                     }
-/*                    if (child.name == "Cube_010")
+                   /* if (child.name == "Cube_010")
                     {
                         AddMaterialEntry(boatName + hullName, child);
                         Debug.Log("boatcolors: adding " + child.name + " " + boatName + hullName);
@@ -241,53 +179,38 @@ namespace BoatColors
                     }*/
                     if (child.name.Contains("trim") || child.name == "Cube_035" || child.name == "Cube_024" || child.name == "Cube_029")
                     {
-                        /*if (!boatMats.ContainsKey(boatName + trimName)) 
-                            boatMats.Add(boatName + trimName, child.GetComponent<MeshRenderer>().material);
-                        child.GetComponent<MeshRenderer>().material = boatMats[boatName + trimName];
-                        Debug.Log("boatcolors: junk trim=" +  child.name);*/
                         AddMaterialEntry(boatName + trimName, child);
 
                     }
-                    if (child.name == "Cube_034" || child.name == "Cube_026")
+                    else if (child.name == "Cube_034" || child.name == "Cube_026")
                     {
                         AddMaterialEntry(boatName + cabinName, child);
 
                     }
-                    if (child.name == "struct_cabin_full")
+                    if (child.transform.parent != structure && child.transform.parent.name == "struct_cabin_full")
                     {
-                        for (int j = 0; j < child.childCount; j++)
+                        if (child.name == "trim_000" || child.name == "Cube_028")
                         {
-                            var subChild = child.GetChild(j);
-                            if (subChild.name == "trim_000" || subChild.name == "Cube_028")
-                            {
-                                /*if (!boatMats.ContainsKey(boatName + cabinName)) 
-                                    boatMats.Add(boatName + cabinName, subChild.GetComponent<MeshRenderer>().material);
-                                subChild.GetComponent<MeshRenderer>().material = boatMats[boatName + cabinName];*/
-                                AddMaterialEntry(boatName + cabinName, subChild);
+                            AddMaterialEntry(boatName + cabinName, child);
 
-                            }
-                            if (subChild.name == "trim_013" || subChild.name == "Cube_043" || subChild.name == "Cube_006" || subChild.name == "Cube_038")
-                            {
-                                /*if (!boatMats.ContainsKey(boatName + trimName))
-                                    boatMats.Add(boatName + trimName, subChild.GetComponent<MeshRenderer>().material);
-
-                                subChild.GetComponent<MeshRenderer>().material = boatMats[boatName + trimName];*/
-                                AddMaterialEntry(boatName + trimName, subChild);
-
-                            }
                         }
+                        else if (child.name == "trim_013" || child.name == "Cube_043" || child.name == "Cube_006" || child.name == "Cube_038")
+                        {
+                            AddMaterialEntry(boatName + trimName, child);
+
+                        }
+
                     }
 
                 }
                 var roof = ship.Find("junk medium (actual)").Find("roof_on");
-                for (int k = 0; k < roof.childCount; k++)
+                foreach (Renderer child in roof.GetComponentsInChildren<Renderer>())
                 {
-                    var child = roof.GetChild(k);
                     if (child.name.Contains("Cube"))
                     {
                         AddMaterialEntry(boatName + trimName, child);
                     }
-                    if (child.name.Contains("trim"))
+                    else if (child.name.Contains("trim"))
                     {
                         AddMaterialEntry(boatName + cabinName, child);
                     }
@@ -297,7 +220,7 @@ namespace BoatColors
 
             }
             // ----- brig -----
-            if (ship.name.Contains("medi medium"))
+            if (ship.GetComponent<SaveableObject>().sceneIndex == 50)
             {
                 var structure = ship.Find("medi medium new");
                 for (int h = 0; h < structure.childCount; h++)
@@ -305,27 +228,20 @@ namespace BoatColors
                     var structure2 = structure.GetChild(h);
                     if (structure2.name == "structure_container")
                     {
-                        for (int i = 0; i < structure2.childCount; i++)
+                        foreach (Renderer child in structure2.GetComponentsInChildren<Renderer>())
                         {
-                            var child = structure2.GetChild(i);
                             if (child.name.Contains("hull"))
                             {
-                                /*if (!boatMats.ContainsKey(boatName + hullName)) boatMats.Add(boatName + hullName, child.GetComponent<MeshRenderer>().materials[1]);
-                                child.GetComponent<MeshRenderer>().materials[1] = boatMats[boatName + hullName];*/
                                 AddMaterialEntry(boatName + hullName, child, 1);
 
                             }
                             if (child.name.Contains("trim") || child.name.Contains("Cube"))
                             {
-                                /* if (!boatMats.ContainsKey(boatName + trimName)) boatMats.Add(boatName + trimName, child.GetComponent<MeshRenderer>().material);
-                                 child.GetComponent<MeshRenderer>().material = boatMats[boatName + trimName];*/
                                 AddMaterialEntry(boatName + trimName, child);
 
                             }
                             if (child.name.Contains("railing"))
                             {
-                                /*if (!boatMats.ContainsKey(boatName + cabinName)) boatMats.Add(boatName + cabinName, child.GetComponent<MeshRenderer>().material);
-                                child.GetComponent<MeshRenderer>().material = boatMats[boatName + cabinName];*/
                                 AddMaterialEntry(boatName + cabinName, child);
 
                             }
@@ -334,17 +250,12 @@ namespace BoatColors
                     }
                     if (structure2.name.Contains("shrouds"))
                     {
-                        for (int j = 0; j < structure2.childCount; j++)
+                        foreach (Renderer child in structure2.GetComponentsInChildren<Renderer>())
                         {
-                            var child2 = structure2.GetChild(j);
-                            for (int k = 0; k < child2.childCount; k++)
+                            if (child.name.Contains("trim"))
                             {
-                                var child3 = child2.GetChild(k);
-                                if (child3.name.Contains("trim"))
-                                {
-                                    AddMaterialEntry(boatName + cabinName, child3);
+                                AddMaterialEntry(boatName + cabinName, child);
 
-                                }
                             }
                         }
 
@@ -354,30 +265,23 @@ namespace BoatColors
 
             }
             // ----- sanbuq -----
-            if (ship.name.Contains("dhow medium"))
+            if (ship.GetComponent<SaveableObject>().sceneIndex == 20)
             {
                 var structure = ship.Find("dhow medium new").Find("structure");
-                for (int i = 0; i < structure.childCount; i++)
+                foreach (Renderer child in structure.GetComponentsInChildren<Renderer>())
                 {
-                    var child = structure.GetChild(i);
                     if (child.name.Contains("hull"))
                     {
-                        /*if (!boatMats.ContainsKey("sanbuqHull")) boatMats.Add("sanbuqHull", child.GetComponent<MeshRenderer>().materials[1]);
-                        child.GetComponent<MeshRenderer>().materials[1] = boatMats["sanbuqHull"];*/
                         AddMaterialEntry(boatName + hullName, child, 1);
 
                     }
                     if (child.name.Contains("Cube"))
                     {
-                        /*if (!boatMats.ContainsKey("sanbuqTrim")) boatMats.Add("sanbuqTrim", child.GetComponent<MeshRenderer>().material);
-                        child.GetComponent<MeshRenderer>().material = boatMats["sanbuqTrim"];*/
                         AddMaterialEntry(boatName + trimName, child);
 
                     }
-                    if (child.name == "part_cabin_cloth")
+                    if (child.name == "canopy")
                     {
-                        /*boatMats.Add("sanbuqCabin", child.Find("canopy").GetComponent<SkinnedMeshRenderer>().material);
-                        child.GetComponent<MeshRenderer>().material = boatMats["sanbuqCabin"];*/
                         AddMaterialEntry(boatName + cabinName, child);
 
                     }
@@ -408,14 +312,14 @@ namespace BoatColors
         public static void LoadColors()
         {
 
-            if (!GameState.modData.ContainsKey(Plugin.PLUGIN_ID))
+           /* if (!GameState.modData.ContainsKey(Plugin.PLUGIN_ID))
             {
                 if (LoadOldColors())
                 {
                     Debug.Log("boatcolors: loaded old colors"); 
                     return;
                 }
-            }
+            }*/
 
             if (GameState.modData.TryGetValue(Plugin.PLUGIN_ID, out string data))
             {
@@ -443,6 +347,13 @@ namespace BoatColors
             }
         }
 
+        public static void ResetColor(string boatName)
+        {
+            if (boatMats.TryGetValue(boatName, out Material mat))
+            {
+                mat.color = defaultColors[boatName];
+            }
+        }
 
         public static void SaveColors()
         {

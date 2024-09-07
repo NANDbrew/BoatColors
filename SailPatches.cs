@@ -14,8 +14,13 @@ namespace BoatColors
         public static void UpdateCustomSailColor(int index, Color color)
         {
             prefabsDirectory.sailColors[index] = color;
+            ShipyardUI.instance.RefreshButtons();
         }
-
+        public static void UpdateCustomSailColors()
+        {
+            SailColorPatcher.UpdateCustomSailColor(24, Plugin.customSailColor.Value);
+            SailColorPatcher.UpdateCustomSailColor(25, Plugin.customSailColor1.Value);
+        }
     }
 
     [HarmonyPatch(typeof(SaveLoadManager))]
@@ -42,17 +47,5 @@ namespace BoatColors
     }
 
 
-    [HarmonyPatch(typeof(Shipyard))]
-    internal class ShipyardPatches
-    {
 
-        [HarmonyPatch("Awake")]
-        [HarmonyPostfix]
-        public static void AddColors(Shipyard __instance, ref int[] ___availableSailColors)
-        {
-            if (!Plugin.useCustomSailColors.Value) { return; }
-
-            ___availableSailColors = ___availableSailColors.AddRangeToArray(new int[] { 24, 25 });
-        }
-    }
 }

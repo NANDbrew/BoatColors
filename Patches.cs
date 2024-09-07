@@ -35,15 +35,33 @@ namespace BoatColors
             }
         }
 
-        [HarmonyPatch(typeof(PlayerEmbarkDisembarkTrigger), "EnterBoat")]
-        public static class Patch1
+
+        [HarmonyPatch(typeof(SaveableBoatCustomization))]
+        public static class SaveLoadPatch2
         {
+            [HarmonyPatch("LoadData")]
             [HarmonyPostfix]
-            public static void PostFix()
+            public static void LoadModData()
             {
-                Plugin.UpdateConfigsFromBoat();
+                ShipColors.LoadColors();
+            }
+            [HarmonyPatch("GetData")]
+            [HarmonyPrefix]
+            public static void SaveModData()
+            {
+                ShipColors.SaveColors();
             }
         }
+
+        /*        [HarmonyPatch(typeof(PlayerEmbarkDisembarkTrigger), "EnterBoat")]
+                public static class Patch1
+                {
+                    [HarmonyPostfix]
+                    public static void PostFix()
+                    {
+                        Plugin.UpdateConfigsFromBoat();
+                    }
+                }*/
 
     }
 }

@@ -13,7 +13,7 @@ namespace BoatColors
     {
         public const string PLUGIN_ID = "com.nandbrew.boatcolors";
         public const string PLUGIN_NAME = "Boat Colors";
-        public const string PLUGIN_VERSION = "0.2.1";
+        public const string PLUGIN_VERSION = "0.3.0";
 
         internal static Plugin instance;
 
@@ -44,28 +44,26 @@ namespace BoatColors
         public static void AddConfigEntries()
         {
 
-            paintCurrentHull = instance.Config.Bind("Current Boat Colors", "Hull", Color.gray, new ConfigDescription("", null, new ConfigurationManagerAttributes { HideDefaultButton = true }));
+           /* paintCurrentHull = instance.Config.Bind("Current Boat Colors", "Hull", Color.gray, new ConfigDescription("", null, new ConfigurationManagerAttributes { HideDefaultButton = true }));
             paintCurrentCabin = instance.Config.Bind("Current Boat Colors", "Roof", Color.gray, new ConfigDescription("", null, new ConfigurationManagerAttributes { HideDefaultButton = true }));
             paintCurrentTrim = instance.Config.Bind("Current Boat Colors", "Trim", Color.gray, new ConfigDescription("", null, new ConfigurationManagerAttributes { HideDefaultButton = true }));
-
-            useCustomSailColors = instance.Config.Bind("Sails", "Use Custom Sail Colors", false, new ConfigDescription("Add custom colors to the sail color menu. (requires restart) \nWARNING! USING THESE WILL MAKE YOUR SAVE DEPENDENT ON THIS MOD!", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
+*/
+            useCustomSailColors = instance.Config.Bind("Sails", "Use Custom Sail Colors", false, new ConfigDescription("Add custom colors to the sail color menu. (requires restart) \nWARNING! USING THESE WILL MAKE YOUR SAVE DEPENDENT ON THIS MOD!", null, new ConfigurationManagerAttributes { IsAdvanced = false }));
             
             if (useCustomSailColors.Value) 
             {
-                customSailColor = instance.Config.Bind("Sails", "Custom Sail Color 1", Color.white, new ConfigDescription("Apply any color to any sail to update", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-                customSailColor1 = instance.Config.Bind("Sails", "Custom Sail Color 2", Color.black, new ConfigDescription("Apply any color to any sail to update", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
+                customSailColor = instance.Config.Bind("Colors", "Custom Color 1", Color.white, new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = false }));
+                customSailColor1 = instance.Config.Bind("Colors", "Custom Color 2", Color.black, new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = false }));
             }
-
-
             SetConfigDelegates();
 
         }
         public static void SetConfigDelegates()
         {
 
-            paintCurrentHull.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.hullName, paintCurrentHull.Value);
+           /* paintCurrentHull.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.hullName, paintCurrentHull.Value);
             paintCurrentCabin.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.cabinName, paintCurrentCabin.Value);
-            paintCurrentTrim.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.trimName, paintCurrentTrim.Value);
+            paintCurrentTrim.SettingChanged += (sender, args) => OnSettingsChanged(ShipColors.trimName, paintCurrentTrim.Value);*/
 
             customSailColor.SettingChanged += (sender, args) => SailColorPatcher.UpdateCustomSailColor(24, customSailColor.Value);
             customSailColor1.SettingChanged += (sender, args) => SailColorPatcher.UpdateCustomSailColor(25, customSailColor1.Value);
