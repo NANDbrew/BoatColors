@@ -67,7 +67,6 @@ namespace BoatColors
                 }
                 
             }
-
             // ----- cog -----
             if (ship.GetComponent<SaveableObject>().sceneIndex == 40)
             {
@@ -96,32 +95,8 @@ namespace BoatColors
 
                     }
                 }
-/*                foreach (Renderer child in container.Find("structure").GetComponentsInChildren<Renderer>(true))
-                {
-                    if (child.transform.parent.name == "struct_var_1__low_roof_" && child.name == "trim_000")
-                    {
-                        AddMaterialEntry(boatName + cabinName, child);
-                        continue;
-                    }
-                    if (child.name.Contains("trim") || child.name.Contains("Cube") || child.name == "struct_var_3__no_cabin_")
-                    {
-                        AddMaterialEntry(boatName + trimName, child);
-                        continue;
-                    }
-                    if (child.name.Contains("hull"))
-                    {
-                        if (child.transform.parent.name == "struct_var_2_balcony_")
-                        {
-                            AddMaterialEntry(boatName + cabinName, child);
-                            continue;
-                        }
-                        AddMaterialEntry(boatName + hullName, child, 1);
-
-                    }
-                }*/
 
             }
-
             // ----- dhow -----
             if (ship.GetComponent<SaveableObject>().sceneIndex == 10)
             {

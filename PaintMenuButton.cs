@@ -30,7 +30,7 @@ namespace BoatColors
 
         public void Initialize()
         {
-
+            GetComponentInChildren<TextMesh>().text = type.ToString();
         }
 
         public void SetTo(bool state)
