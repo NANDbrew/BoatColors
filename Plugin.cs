@@ -108,18 +108,25 @@ namespace BoatColors
             {
                 currentBoat = "junk";
             }
+            else currentBoat = "";
             return currentBoat;
         }
 
         public static void UpdateConfigsFromBoat()
         {
 
+            try
+            {
+                //if (!GameState.lastBoat || ShipColors.boatMats == null) return;
+                paintCurrentHull.Value = ShipColors.boatMats[GameState.lastBoat.name + ShipColors.hullName].color;
+                paintCurrentCabin.Value = ShipColors.boatMats[GameState.lastBoat.name + ShipColors.cabinName].color;
+                paintCurrentTrim.Value = ShipColors.boatMats[GameState.lastBoat.name + ShipColors.trimName].color;
 
-            if (!GameState.lastBoat || ShipColors.boatMats == null) return;
-            paintCurrentHull.Value = ShipColors.boatMats[GameState.lastBoat.name + ShipColors.hullName].color;
-            paintCurrentCabin.Value = ShipColors.boatMats[GameState.lastBoat.name + ShipColors.cabinName].color;
-            paintCurrentTrim.Value = ShipColors.boatMats[GameState.lastBoat.name + ShipColors.trimName].color;
-
+            }
+            catch
+            {
+                Debug.LogError("BoatColors: couldn't update config");
+            }
         }
 
     }

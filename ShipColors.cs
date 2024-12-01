@@ -11,12 +11,12 @@ namespace BoatColors
 {
     internal class ShipColors
     {
-        private static readonly char keyValSep = '=';
-        private static readonly char entrySep = ',';
+        private const char keyValSep = '=';
+        private const char entrySep = ',';
 
-        public static readonly string trimName = " trim";
-        public static readonly string hullName = " hull";
-        public static readonly string cabinName = " cabin";
+        public const string trimName = " trim";
+        public const string hullName = " hull";
+        public const string cabinName = " cabin";
 
         public static Dictionary<string, Material> boatMats = new Dictionary<string, Material>();
         //public static Dictionary<string, Color> defaultColors = new Dictionary<string, Color>();
@@ -386,37 +386,8 @@ namespace BoatColors
             //Plugin.AddConfigEntries();
         }
 
-        private static bool LoadOldColors()
-        {
-            bool success = false;
-            for (int i = 0; i < boatMats.Count; i++)
-            {
-                KeyValuePair<string, Material> mat = boatMats.ElementAt(i);
-                string key = Plugin.GetBoatName(mat.Key);
-                //Debug.Log("boatColors: " + mat.Key.Split('H')[0]);
-                if (GameState.modData.TryGetValue(key, out var hexColor))
-                {
-                    ColorUtility.TryParseHtmlString(hexColor, out Color color);
-                    mat.Value.color = color;
-                    GameState.modData.Remove(key);
-                    success = true;
-                }
-            }
-            return success;
-        }
-
         public static void LoadColors()
         {
-
-            if (!GameState.modData.ContainsKey(Plugin.PLUGIN_ID))
-            {
-                if (LoadOldColors())
-                {
-                    Debug.Log("boatcolors: loaded old colors"); 
-                    return;
-                }
-            }
-
             if (GameState.modData.TryGetValue(Plugin.PLUGIN_ID, out string data))
             {
                 //Debug.Log("string=" + colorStrings);
