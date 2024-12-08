@@ -13,7 +13,7 @@ namespace BoatColors
     {
         public const string PLUGIN_ID = "com.nandbrew.boatcolors";
         public const string PLUGIN_NAME = "Boat Colors";
-        public const string PLUGIN_VERSION = "0.2.1";
+        public const string PLUGIN_VERSION = "0.2.2";
 
         internal static Plugin instance;
 
